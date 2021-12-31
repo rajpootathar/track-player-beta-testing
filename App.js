@@ -25,21 +25,25 @@ import playlistData from './react/data/playlist.json';
 import localTrack from './react/resources/pure.m4a';
 
 const setupIfNecessary = async () => {
-
   await TrackPlayer.setupPlayer({});
   await TrackPlayer.updateOptions({
     stopWithApp: false,
     capabilities: [
       Capability.Play,
       Capability.Pause,
-      Capability.SkipToNext,
-      Capability.SkipToPrevious,
+      Capability.JumpForward,
+      Capability.JumpBackward,
       Capability.Stop,
     ],
-    compactCapabilities: [Capability.Play, Capability.Pause],
+    compactCapabilities: [
+      Capability.Play,
+      Capability.Pause,
+      Capability.JumpBackward,
+      Capability.JumpForward,
+    ],
   });
 
-  await TrackPlayer.add(playlistData);
+  // await TrackPlayer.add(playlistData);
   await TrackPlayer.add({
     url: localTrack,
     title: 'Pure (Demo)',
@@ -48,7 +52,7 @@ const setupIfNecessary = async () => {
     duration: 28,
   });
 
-  TrackPlayer.setRepeatMode(RepeatMode.Queue);
+  // TrackPlayer.setRepeatMode(RepeatMode.Queue);
 };
 
 const togglePlayback = async playbackState => {
@@ -72,6 +76,16 @@ const Player = () => {
   const [trackTitle, setTrackTitle] = useState();
   const [trackArtist, setTrackArtist] = useState();
 
+  useEffect(() => {
+    let a = TrackPlayer.addEventListener(Event.PlaybackQueueEnded, data => {
+      const {position} = data;
+
+      console.log('PlaybackQueueEnded', position);
+    });
+
+    return () => a?.remove?.();
+  }, []);
+
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     if (
       event.type === Event.PlaybackTrackChanged &&
@@ -82,6 +96,8 @@ const Player = () => {
       setTrackTitle(title);
       setTrackArtist(artist);
       setTrackArtwork(artwork);
+
+      console.log(await TrackPlayer.getQueue());
     }
   });
 

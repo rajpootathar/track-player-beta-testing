@@ -35,4 +35,12 @@ module.exports = async function setup() {
       }
     }
   });
+
+  TrackPlayer.addEventListener(Event.RemoteJumpForward, () => {
+    console.log('RemoteJumpForward Called');
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteJumpBackward, () => {
+    console.log('RemoteJumpBackward Called');
+  });
 };
