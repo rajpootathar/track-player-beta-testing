@@ -27,7 +27,7 @@ import localTrack from './react/resources/pure.m4a';
 const setupIfNecessary = async () => {
   await TrackPlayer.setupPlayer({});
   await TrackPlayer.updateOptions({
-    stopWithApp: false,
+    stopWithApp: true,
     capabilities: [
       Capability.Play,
       Capability.Pause,
@@ -55,19 +55,6 @@ const setupIfNecessary = async () => {
   // TrackPlayer.setRepeatMode(RepeatMode.Queue);
 };
 
-const togglePlayback = async playbackState => {
-  const currentTrack = await TrackPlayer.getCurrentTrack();
-  if (currentTrack == null) {
-    // TODO: Perhaps present an error or restart the playlist?
-  } else {
-    if (playbackState !== State.Playing) {
-      await TrackPlayer.play();
-    } else {
-      await TrackPlayer.pause();
-    }
-  }
-};
-
 const Player = () => {
   const playbackState = usePlaybackState();
   const progress = useProgress();
@@ -75,16 +62,42 @@ const Player = () => {
   const [trackArtwork, setTrackArtwork] = useState();
   const [trackTitle, setTrackTitle] = useState();
   const [trackArtist, setTrackArtist] = useState();
+  const [isNotificationVisible, setIsNotificationVisible] = useState(true);
 
-  useEffect(() => {
-    let a = TrackPlayer.addEventListener(Event.PlaybackQueueEnded, data => {
-      const {position} = data;
-
-      console.log('PlaybackQueueEnded', position);
-    });
-
-    return () => a?.remove?.();
-  }, []);
+  const togglePlayback = async playbackState => {
+    const currentTrack = await TrackPlayer.getCurrentTrack();
+    if (currentTrack == null) {
+      // TODO: Perhaps present an error or restart the playlist?
+    } else {
+      if (playbackState !== State.Playing) {
+        await TrackPlayer.play();
+        if (isNotificationVisible) {
+          await TrackPlayer.updateOptions({
+            stopWithApp: true,
+            capabilities: [
+              Capability.Play,
+              Capability.Pause,
+              Capability.JumpForward,
+              Capability.JumpBackward,
+              Capability.Stop,
+            ],
+            compactCapabilities: [
+              Capability.Play,
+              Capability.Pause,
+              Capability.JumpBackward,
+              Capability.JumpForward,
+            ],
+          });
+        } else {
+          await TrackPlayer.updateOptions({});
+        }
+      } else {
+        await TrackPlayer.pause();
+        await TrackPlayer.stop();
+        await TrackPlayer.remove(currentTrack);
+      }
+    }
+  };
 
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     if (
@@ -96,14 +109,11 @@ const Player = () => {
       setTrackTitle(title);
       setTrackArtist(artist);
       setTrackArtwork(artwork);
-
-      console.log(await TrackPlayer.getQueue());
     }
   });
 
   return (
     <SafeAreaView style={styles.screenContainer}>
-      <StatusBar barStyle={'light-content'} />
       <View style={styles.contentContainer}>
         <View style={styles.topBarContainer}>
           <TouchableWithoutFeedback>
@@ -142,7 +152,7 @@ const Player = () => {
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => togglePlayback(playbackState)}>
           <Text style={styles.primaryActionButton}>
-            {playbackState === State.Playing ? 'Pause' : 'Play'}
+            {playbackState === State.Playing ? 'Stop' : 'Play'}
           </Text>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => TrackPlayer.skipToNext()}>

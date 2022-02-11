@@ -5155,10 +5155,10 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
-react-native-track-player@2.2.0-beta12:
-  version "2.2.0-beta12"
-  resolved "https://registry.yarnpkg.com/react-native-track-player/-/react-native-track-player-2.2.0-beta12.tgz#bced1c7e1c6b53fb3bd78e6681452d8a104c88ca"
-  integrity sha512-eDyvNLLet/cNtNTmvWPuxPn7pPw8guChfXxXdtDhOfSonjFB+L+47dmTIJNwaiPNczmwIsQYQeocNX4bWW3hlw==
+react-native-track-player@2.2.0-beta13:
+  version "2.2.0-beta13"
+  resolved "https://registry.yarnpkg.com/react-native-track-player/-/react-native-track-player-2.2.0-beta13.tgz#45ee1f293d647188e9fc905f94eda2ef44ddf1cd"
+  integrity sha512-jC+uGz8Rf4uCeWR7WoQrnxpMeIgpbR1IJ9NEr6i33fiHLD3eBDCJhGXIbeEFexEjVMz6QNsXSxVN7HuLAsnEqA==
 
 react-native@0.64.2:
   version "0.64.2"

@@ -13,7 +13,7 @@
     "@react-native-community/slider": "^4.1.12",
     "react": "17.0.1",
     "react-native": "0.64.2",
-    "react-native-track-player": "2.2.0-beta12"
+    "react-native-track-player": "2.2.0-beta13"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
