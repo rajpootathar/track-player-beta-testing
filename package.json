@@ -7,13 +7,14 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "ins": "git clean -xdf && yarn && yarn android"
   },
   "dependencies": {
     "@react-native-community/slider": "^4.1.12",
     "react": "17.0.1",
     "react-native": "0.64.2",
-    "react-native-track-player": "2.2.0-beta13"
+    "react-native-track-player": "2.2.0-beta14"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

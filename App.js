@@ -25,9 +25,10 @@ import playlistData from './react/data/playlist.json';
 import localTrack from './react/resources/pure.m4a';
 
 const setupIfNecessary = async () => {
-  await TrackPlayer.setupPlayer({});
-  await TrackPlayer.updateOptions({
+  await TrackPlayer.setupPlayer({
     stopWithApp: true,
+  });
+  await TrackPlayer.updateOptions({
     capabilities: [
       Capability.Play,
       Capability.Pause,
@@ -62,39 +63,35 @@ const Player = () => {
   const [trackArtwork, setTrackArtwork] = useState();
   const [trackTitle, setTrackTitle] = useState();
   const [trackArtist, setTrackArtist] = useState();
-  const [isNotificationVisible, setIsNotificationVisible] = useState(true);
 
-  const togglePlayback = async playbackState => {
+  const togglePlayback = async _playbackState => {
     const currentTrack = await TrackPlayer.getCurrentTrack();
     if (currentTrack == null) {
-      // TODO: Perhaps present an error or restart the playlist?
+      alert('No Track');
     } else {
-      if (playbackState !== State.Playing) {
+      if (_playbackState !== State.Playing) {
+        await TrackPlayer.updateOptions({
+          capabilities: [
+            Capability.Play,
+            Capability.Pause,
+            Capability.JumpForward,
+            Capability.JumpBackward,
+            Capability.Stop,
+          ],
+          compactCapabilities: [
+            Capability.Play,
+            Capability.Pause,
+            Capability.JumpBackward,
+            Capability.JumpForward,
+          ],
+        });
         await TrackPlayer.play();
-        if (isNotificationVisible) {
-          await TrackPlayer.updateOptions({
-            stopWithApp: true,
-            capabilities: [
-              Capability.Play,
-              Capability.Pause,
-              Capability.JumpForward,
-              Capability.JumpBackward,
-              Capability.Stop,
-            ],
-            compactCapabilities: [
-              Capability.Play,
-              Capability.Pause,
-              Capability.JumpBackward,
-              Capability.JumpForward,
-            ],
-          });
-        } else {
-          await TrackPlayer.updateOptions({});
-        }
       } else {
         await TrackPlayer.pause();
-        await TrackPlayer.stop();
-        await TrackPlayer.remove(currentTrack);
+        await TrackPlayer.updateOptions({
+          capabilities: [],
+          compactCapabilities: [],
+        });
       }
     }
   };
@@ -152,7 +149,7 @@ const Player = () => {
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => togglePlayback(playbackState)}>
           <Text style={styles.primaryActionButton}>
-            {playbackState === State.Playing ? 'Stop' : 'Play'}
+            {playbackState === State.Playing ? 'Pause' : 'Play'}
           </Text>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => TrackPlayer.skipToNext()}>
